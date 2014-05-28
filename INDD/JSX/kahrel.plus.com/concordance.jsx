@@ -1,0 +1,331 @@
+﻿#target indesign;
+
+// Global constants ===========================================================
+
+	/*
+	At "ok_stylenames", list the names of the paragraph styles
+	that should be considered. Enter just the first three characters
+	of the name preceded by a pipe (|). Case-sensitive. 
+	To include all paragraph styles, use "".
+	*/
+
+//~ ok_stylenames = "|def|sec|not";
+ok_stylenames = "";
+
+
+//=============================================================================
+
+// The parameter is the name of the text file with the previous dialog settings.
+// It lives in the script directory.
+
+concordance ("previous_context_search.txt");
+
+/*
+	'context' (which we get from the interface) returns a five-element object:
+	context.find: word or phrase to find
+	context.before: number of words before before search word
+	context.after: number of words after search word
+	context.case_sensitive: boolean
+	context.active_doc: boolean (do active doc. only, or all open docs
+*/
+
+function concordance (previous_search)
+	{
+	// Get data from user
+	var context = get_context (previous_search);
+	// "mess___" must be global
+	mess___ = create_mess (30);
+	// Create a GREP expression
+	var find_expression = build_expression (context);
+	// Create concordance
+	var list = find_in_context (find_expression, context);
+	mess___.text = 'Sorting and tidying up...';
+	// Sort the list by page number
+	list = sort_and_tidy (list);
+	if (list != "")
+		{
+		mess___.text = 'Placing list...';
+		// Create new document and place the list
+		flow (list);
+		// Emphasise the concordance word
+		emphasise (context.find);
+		}
+	else
+		errorM ('Nothing to do.', " ");
+	mess___.parent.close ();
+	}
+
+//----------------------------------------------------------
+
+/* Build a GREP expression. A string like this is produced
+	(looking for 'discourse' with 5 words before and after):
+
+	Thanks to Jaroslav Průka for some improvements here
+	(\s[^\s]+){0,5}[\s[:punct:]]+discourse\w*[[:punct:]]?(\s[^\s]+){0,5}
+	We define 'word' as any sequence of characters between two \s
+*/
+
+
+function build_expression (context)
+	{
+	return context.case_sensitive + 
+			'(\\s[^\\s]+){0,' + context.before + '}' +
+			'[\\s[:punct:]]+' +
+			context.find +
+			'\\w*[[:punct:]]?' +
+			'(\\s[^\\s]+){0,' + context.after + '}'
+	}
+
+
+function find_in_context (grep, context)
+	{
+	mess___.text = 'Collecting words in context...';
+	app.findGrepPreferences = null;
+	app.findChangeGrepOptions.includeMasterPages = false;
+	app.findChangeGrepOptions.includeFootnotes = true;
+	app.findGrepPreferences.findWhat = grep;
+//~ 	exit()
+	if (context.active_doc == true)
+		var f = app.activeDocument.findGrep ();
+	else
+		var f = app.findGrep();
+	if (f.length > 0)
+		{
+		mess___.text = 'Building list...';
+		var list = make_array (f, context.find, context.case_sensitive);
+		return list;
+		}
+	else
+		errorM ('Nothing to show.');
+	}
+
+
+// insert page number if necessary
+
+function make_array (collection, word, cs)
+	{
+	array = [];
+	n = 0;
+	app.findGrepPreferences.findWhat = cs + word;
+	for (var i = 0; i < collection.length; i++)
+		{
+		// We found he target word and the preceding and following words.
+		// Now we need the target word itself to get the page number
+		// (target word and first word of found string are not necessarily
+		// on the same page)
+		var target_word = collection[i].findGrep()[0];
+		if (style_ok (target_word))
+			{
+			var pagenum = find_page (target_word).name;
+			if (pagenum != "")
+				{
+				var s = clean (collection[i]);
+				array[n] = pagenum + ' ' + s;
+				n++
+				}
+			}
+		}
+	return array
+	}
+
+
+function style_ok (w)
+	{
+	return ((ok_stylenames == "") || 
+				(ok_stylenames.search (w.appliedParagraphStyle.name.slice (0,3)) > 0))
+	}
+
+
+// Replace par. break with ||, tab with space 
+function clean (o)
+	{
+	// replace par. breaks with ||
+	var s = o.contents.replace (/\r/g, ' || ');
+	// replace tab with space
+	s = s.replace (/\t/g, ' ');
+	// delete spurious spaces
+	s = s.replace (/  +/g, ' ');
+	return s
+	}
+	
+
+function find_page (o)
+    {
+    try
+        {
+        if (o.hasOwnProperty ("parentPage"))
+            return o.parentPage;
+        if (o.constructor.name == "Page")
+            return o;
+        switch (o.parent.constructor.name)
+            {
+            case "Character": return find_page (o.parent);
+            case "Cell": return find_page (o.parent.texts[0].parentTextFrames[0]);7
+            case "Table" : return find_page (o.parent);
+            case "TextFrame" : return find_page (o.parent);
+            case "Group" : return find_page (o.parent);
+            case "Story": return find_page (o.parentTextFrames[0]);
+            case "Footnote": return find_page (o.parent.storyOffset);
+            case "Page" : return o.parent;
+            }
+        }
+        catch (_) {return ""}
+    }
+
+function emphasise (w)
+	{
+	mess___.text = 'Emphasising ' + w + '...';
+	var cs = app.activeDocument.characterStyles.add ({name:'bold', fontStyle:'Bold'})
+	app.findGrepPreferences = app.changeGrepPreferences = null;
+	app.findGrepPreferences.findWhat = '(?i)' + w;
+	app.changeGrepPreferences.appliedCharacterStyle = cs;
+	app.activeDocument.changeGrep();
+	}
+
+
+function flow (inp)
+	{
+	var doc = app.documents.add();
+	doc.viewPreferences.rulerOrigin = RulerOrigin.pageOrigin;
+	var marg = doc.pages[0].marginPreferences;
+	var gb = [marg.top, marg.left, 
+		app.documentPreferences.pageHeight - marg.bottom, 
+		app.documentPreferences.pageWidth - marg.right];
+	doc.textFrames.add ({geometricBounds: gb, contents: inp});
+	while (doc.pages[-1].textFrames[0].overflows)
+		{
+		doc.pages.add().textFrames.add ({geometricBounds: gb});
+		doc.pages[-1].textFrames[0].previousTextFrame = 
+			doc.pages[-2].textFrames[0];
+		}
+	}
+
+
+// sort and delete empty lines
+function sort_and_tidy (array)
+	{
+//	var s = array.join ('\r');
+//	s = s.replace (/\r\r+/g, '\r');
+//	s = s.replace (/\r$/, "");
+//	array = s.split ('\r');
+	array = array.sort (sort_initnum);
+	return array.join ('\r')
+	}
+
+
+
+
+function sort_initnum (a, b)
+	{
+	return a.match (/^\d+/)[0] - b.match (/^\d+/)[0]
+	}
+
+
+function create_mess (le)
+	{
+	dlg___ = new Window ('palette');
+	dlg___.alignChildren = ['left', 'top'];
+	var txt = dlg___.add ('statictext', undefined, '');
+	txt.characters = le;
+	dlg___.show();
+	return txt
+	}
+
+
+function errorM (m,title)
+	{
+	if (title == undefined) title = " ";
+	alert (m, title);
+	mess___.close ();
+	exit();
+	}
+
+
+// Interface ==================================================================
+
+function get_context (previous_search)
+	{
+	var w = new Window ('dialog', 'Concordance');
+	var panel = w.add ('panel');
+	panel.alignChildren = ['left', 'top'];
+	var g1 = panel.add ('group');
+		g1.orientation = 'row';
+		g1.add ('statictext', undefined, 'Search:');
+		var to_search = g1.add ('edittext');
+	var g2 = panel.add ('group');
+		g2.add ('statictext', undefined, 'Words before:');
+		var before = g2.add ('edittext');
+		g2.add ('statictext', undefined, 'Words after:');
+		var after = g2.add ('edittext');
+	var g3 = panel.add ('group')
+		var case_sens = g3.add ('checkbox', undefined, ' Case sensitive\u00A0');
+		var act_doc = g3.add ('checkbox', undefined, ' Active document only\u00A0');
+	var button_group = w.add ('group');
+		button_group.orientation = 'row';
+		button_group.alignment = 'right';
+		//okButton = button_group.add('button', undefined, 'OK');
+		button_group.add ('button', undefined, 'OK');
+		button_group.add ('button', undefined, 'Cancel');
+
+	var previous = get_previous (previous_search);
+	to_search.characters = 50;
+	to_search.text = previous.find;
+	to_search.active = true;
+	before.characters = 3;	//width of the field
+	after.characters = 3;
+	before.text = previous.before;		//presets
+	after.text = previous.after;
+	case_sens.value = previous.case_sensitive == "";
+	if (app.documents.length == 1)
+		act_doc.enabled = false;
+
+	// If 'before' changes, change after to the same value
+	before.onChange = function() {after.text = before.text}
+	
+	if( w.show() == 2 )
+		exit();
+	else
+		{
+		var obj = {find: to_search.text,
+					before: before.text,
+					after: after.text,
+					case_sensitive: case_sens.value == false ? '(?i)' : "",
+					active_doc: act_doc.value}
+		write_previous (previous_search, obj);
+		return obj
+		}
+	}
+
+
+
+function get_previous (previous_search)
+	{
+	var f = File (script_dir() + previous_search);
+	if (f.exists)
+		{
+		f.open ('r');
+		f.encoding = 'utf-8';
+		var temp = f.read();
+		f.close()
+		}
+	else
+		temp = "({find:'', before:5, after:5})";
+	return eval (temp)
+	}
+
+
+function write_previous (previous_search, o)
+	{
+	var f = File (script_dir() + previous_search);
+	f.open ('w');
+	f.encoding = 'utf-8';
+	f.write (o.toSource());
+	f.close ()
+	}
+
+
+function script_dir()
+	{
+	try {return File (app.activeScript).path+'/'}
+	catch (e) {return File (e.fileName).path+'/'}
+	}

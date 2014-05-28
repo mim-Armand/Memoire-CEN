@@ -1,0 +1,1 @@
+({w_location:"486,294", w_size:"770,385", w_typesize:19, button_typesize:12, w_grep:"%5Cw", f_options:{LL:false, LS:false, HL:false, M:false, FN:false}, ttip:true, wildcard_window:"493,210"})
