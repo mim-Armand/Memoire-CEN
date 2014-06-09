@@ -7,6 +7,7 @@
 
 WORK IN Progress
 - [ ] Write the memoire!
+	-[ ] business plan (as part of the project) (in progress)
 - [ ] Design
 	- [ ] Graphic design
 	- [ ] Page making
