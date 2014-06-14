@@ -11,6 +11,7 @@ WORK IN Progress
 	  - [x] English Version
 	  - [x] French Version
 	  - [ ] graphic design
+	     - [ ] Indesign plugin (auto generating patterns and motifs!) (in progress)
 - [ ] Design
 	- [ ] Graphic design
 	- [ ] Page making
