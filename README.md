@@ -10,8 +10,8 @@ WORK IN Progress
 	- [x] business plan (as part of the project) (in progress)
 	  - [x] English Version
 	  - [x] French Version
-	  - [ ] graphic design
-	     - [ ] Indesign plugin (auto generating patterns and motifs!) (in progress)
+	  - [x] graphic design
+	     - [x] Indesign plugin (auto generating patterns and motifs!) (in progress)
 - [ ] Design
 	- [ ] Graphic design
 	- [ ] Page making
