@@ -7,6 +7,7 @@
 
 WORK IN Progress
 - [ ] Write the memoire!
+	- [ ] "Stage" Section!
 	- [x] business plan (as part of the project) (in progress)
 	  - [x] English Version
 	  - [x] French Version
