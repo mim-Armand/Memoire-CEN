@@ -8,6 +8,7 @@
 WORK IN Progress
 - [ ] The plan
  - [ ] send the plan to Arnaud.
+ - [ ] first have to write it tho!
 - [ ] Write the memoire!
 	- [ ] "Stage" Section!
 	- [x] business plan (as part of the project) (in progress)
