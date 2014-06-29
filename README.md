@@ -18,7 +18,9 @@ WORK IN Progress
 	     - [x] Indesign plugin (auto generating patterns and motifs!) (in progress)
 - [ ] Design
 	- [ ] Graphic design
+	  - [x] pattern generator
 	- [ ] Page making
+	  - [x] indesign plugin (I wrote this plugin for my thesis!)
 	- [ ] Illustrations
 
 
