@@ -21,6 +21,7 @@ WORK IN Progress
 	  - [x] pattern generator
 	- [ ] Page making
 	  - [x] indesign plugin (I wrote this plugin for my thesis!)
+	  - [ ] Make the plugin "production ready"!
 	- [ ] Illustrations
 
 
