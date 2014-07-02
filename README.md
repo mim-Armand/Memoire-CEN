@@ -11,6 +11,7 @@ WORK IN Progress
  - [ ] first have to write it tho!
 - [ ] Write the memoire!
 	- [ ] "Stage" Section!
+	- [ ] Indesign plugin development section.
 	- [x] business plan (as part of the project) (in progress)
 	  - [x] English Version
 	  - [x] French Version
