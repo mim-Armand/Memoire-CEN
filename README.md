@@ -12,7 +12,7 @@ WORK IN Progress
 - [ ] Write the memoire!
 	- [ ] "Stage" Section!
 	  - [ ] Analyses
-	  - [ ] Application technical expanation
+	  - [ ] Application technical expanation...
 	- [ ] Indesign plugin development section.
 	- [x] business plan (as part of the project) (in progress)
 	  - [x] English Version
