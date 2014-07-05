@@ -23,7 +23,7 @@ WORK IN Progress
 	- [ ] Graphic design
 	  - [x] pattern generator
 	- [ ] Page making
-	  - [x] indesign plugin (I wrote this plugin for my thesis!)
+	  - [x] indesign plugin (I wrote this plugin for my thesis!) --> in progress still!
 	  - [ ] Make the plugin "production ready"!
 	- [ ] Illustrations
 
