@@ -24,6 +24,8 @@ WORK IN Progress
 	  - [x] pattern generator
 	- [ ] Page making
 	  - [x] indesign plugin (I wrote this plugin for my thesis!) --> in progress still!
+	    - [x] Just finiched the extendscript part! it's almost ready for pre-release!
+	    - [ ] have to create a few image generator algos for pre-release!
 	  - [ ] Make the plugin "production ready"!
 	- [ ] Illustrations
 
