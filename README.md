@@ -11,16 +11,24 @@ WORK IN Progress
  - [ ] first have to write it tho!
 - [ ] Write the memoire!
 	- [ ] "Stage" Section!
+	  - [ ] Analyses
+	  - [ ] Application technical expanation...
+	- [ ] Indesign plugin development section.
 	- [x] business plan (as part of the project) (in progress)
 	  - [x] English Version
 	  - [x] French Version
-	  - [x] graphic design
-	     - [x] Indesign plugin (auto generating patterns and motifs!) (in progress)
+	  - [ ] graphic design
+	     - [x] Indesign plugin (auto generating patterns and motifs!) (in progress --> pre-release almost ready!)
 - [ ] Design
 	- [ ] Graphic design
 	  - [x] pattern generator
 	- [ ] Page making
-	  - [x] indesign plugin (I wrote this plugin for my thesis!)
+	  - [x] indesign plugin (I wrote this plugin for my thesis!) --> in progress still!
+	    - [x] Just finiched the extendscript part! it's almost ready for pre-release!
+	    - [ ] Make the package for Adobe Exchange
+	    - [x] have to create a few image generator algos for pre-release! (finished 6 of them and will finish another one before going to sleep! so: 7)
+	  - [ ] Make the plugin "production ready"!
+	  - [ ] have to switch from Nconvert to IM Convert now! Nconvert doen't work very well! :/
 	- [ ] Illustrations
 
 
