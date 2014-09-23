@@ -19,7 +19,8 @@ void setup(){
   hc = round(h/2);
   bg1 = createGraphics(w, h);
   fg1 = createGraphics(w, h);
-  size(w, h);
+  size(w, h, P3D);
+  frameRate(666);
   if (frame != null) {
     frame.setResizable(true);
   }
@@ -56,8 +57,7 @@ void render( float wiggle_fg, float wiggle_bg ){
 }
 
 void p1(){
-  
-  khat(bg1);
+  khat(bg1, true);
   if(!bool){
     photo = loadImage("1.png");
     fg1.beginDraw();
@@ -66,11 +66,14 @@ void p1(){
     fg1.endDraw();
     bool = true;
   }
-  render(/* wiggle foregrand 1 , background 1: */0 , 0);
+  render(/* wiggle foregrand 1 , background 1: */1 , 0);
   
 }
 
-PGraphics khat( PGraphics l){
+PGraphics khat( PGraphics l, boolean isRandomGray){
+  if(isRandomGray){
+    l.stroke(random(0, 45));
+  }
   l.beginDraw();
   l.strokeWeight(random(15));
   l.strokeCap(SQUARE);
