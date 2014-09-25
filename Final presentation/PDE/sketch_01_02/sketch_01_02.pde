@@ -109,10 +109,13 @@ void draw() {
     addRemoveParticles();
     
   // update and display each particle in the list
+  dummy.beginDraw();
   for (Particle p : particles) {
     p.update();
     p.display();
   }
+  dummy.endDraw();
+  image(dummy, pg.width/2, pg.height/2);
   image(pg, pg.width/2, pg.height/2);
   
   

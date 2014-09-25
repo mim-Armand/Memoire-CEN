@@ -43,8 +43,8 @@ class Particle {
       PARTICLE_COLOR = color(0, 125);
       PARTICLE_COLOR_FILL = color(255,33);
     }
-    fill(PARTICLE_COLOR_FILL); // white fill
-    stroke(PARTICLE_COLOR); // transparant black stroke
+    dummy.fill(PARTICLE_COLOR_FILL); // white fill
+    dummy.stroke(PARTICLE_COLOR); // transparant black stroke
     float r = radius; // radius of the ellipse
     switch(drawMode) {
       case 0: break; // don't change radius
@@ -52,8 +52,8 @@ class Particle {
       case 2: // go to 3
       case 3: r *= life; break; // base the radius of the ellipse on the life (which decreases from 1 to 0)
     }
-    ellipse(loc.x, loc.y, r, r); // draw ellipse
-    // image(pg, pg.width/2, pg.height/2);
+    
+    dummy.ellipse(loc.x, loc.y, r, r); // draw ellipse
   }
 
   // return if point is inside the text
