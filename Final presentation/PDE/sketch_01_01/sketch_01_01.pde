@@ -34,8 +34,8 @@ boolean sketchFullScreen() {
 void setup() {
   
   //============================ REMOVE ====================================
-  showGrid = showMous = false;
-  currentPage = 6;
+  // showGrid = showMous = false;
+  // currentPage = 6;
   //========================================================================
   
   strk1 = 6;
