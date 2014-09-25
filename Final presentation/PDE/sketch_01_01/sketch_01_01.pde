@@ -1,11 +1,26 @@
-boolean isFullscreen = true; //<>//
+int maxParticles = 15; // the maximum number of active particles //<>//
+ArrayList <Particle> particles = new ArrayList <Particle> (); // the list of particles
+int drawMode = 2; // cycle through the drawing modes by clicking the mouse
+color BACKGROUND_COLOR = color(255);
+color PGRAPHICS_COLOR = color(255);
+color PARTICLE_COLOR = color(0, 125);
+color PARTICLE_COLOR_FILL = color(255,33);
+PGraphics pg;
+boolean remerciment = false;
+
+
+
+
+boolean isFullscreen = true;
 boolean timer = true;
 boolean showHud = true;
 boolean showGrid = true;
-boolean console = true;
+boolean showMous = true;
+boolean console = false;
+boolean nextOrPrevious = true; // true: next, false: previous
 int currentPage = 0;
 PImage photo;
-PGraphics bg1, fg1, hud;
+PGraphics bg1, fg1, hud, mouseLayer;
 int w, h, wc, hc, strk1;
 boolean bool = false;
 float fg_rx = 0;
@@ -17,6 +32,12 @@ boolean sketchFullScreen() {
 }
 
 void setup() {
+  
+  //============================ REMOVE ====================================
+  // showGrid = showMous = false;
+  // currentPage = 6;
+  //========================================================================
+  
   strk1 = 6;
   w = 800;
   h = 600;
@@ -27,45 +48,212 @@ void setup() {
   bg1 = createGraphics(w, h);
   fg1 = createGraphics(w, h);
   hud = createGraphics(w, h);
+  mouseLayer = createGraphics(w, h);
   size(w, h, P3D);
-  frameRate(666);
   if (frame != null) {
     frame.setResizable(true);
   }
   smooth();
   background(255);
   imageMode(CENTER);
+  
+  
+  pg = createGraphics(width, height, JAVA2D);
+  pg.beginDraw();
+  pg.textSize(180);
+  pg.textAlign(CENTER, CENTER);
+  pg.fill(PGRAPHICS_COLOR);
+  pg.text("MERCi!", pg.width/2, pg.height/2);
+  pg.textSize(30);
+  pg.text("mim,", pg.width/2 , pg.height/2 +120);
+  pg.endDraw();
+  background(BACKGROUND_COLOR);
+
+  
 }
 
 void draw() {
-  background(255);
-  switch(currentPage) {
-  case 0: 
-    p1();
-    break;
-  case 1:
-    break;
+  if(!remerciment) background(255);
+  if (!isErased) {
+    eraser();
+  } else {
+    switch(currentPage) {
+    case 0:
+      fg1.beginDraw();
+      fg1.clear();
+      fg1.endDraw();
+      break;
+    case 1:
+      p1();
+      break;
+    case 2:
+      p2();
+      break;
+    case 3:
+      p3();
+      break;
+    case 4:
+      p4();
+      break;
+    case 5:
+      p5();
+      break;
+    case 6:
+      remerciment = true;
+      break;
+    }
+  }
+  render(/* wiggle foregrand 1 , background 1: */1.2, 0);
+  if(remerciment){
+    addRemoveParticles();
+    image(pg, pg.width/2, pg.height/2);
+  // update and display each particle in the list
+  for (Particle p : particles) {
+    p.update();
+    p.display();
+  }
+  
+  
+  
+
+  
+  
   }
 }
-void render( float wiggle_fg, float wiggle_bg ) {
-  if (wiggle_fg != 0) {
-    fg_rx = random(-wiggle_fg, wiggle_fg);
-    fg_ry = random(-wiggle_fg, wiggle_fg);
-  };
-  if (wiggle_bg != 0) {
-    bg_rx = random(-wiggle_bg, wiggle_bg);
-    bg_ry = random(-wiggle_bg, wiggle_bg);
-  };
 
-  image(bg1, wc + bg_rx, hc + bg_ry);
-  image(fg1, wc + fg_rx, hc + fg_ry);
-  if (showHud) {
-    drawHud();
-    image(hud, wc, hc);
+
+
+
+
+
+
+
+int cycles = 0;
+int sessionCycles = 0;
+boolean randomColor = false;
+void addRemoveParticles() {
+  if (drawMode >= 1) {
+    // remove particles with no life left
+    for (int i=particles.size()-1; i>=0; i--) {
+      Particle p = particles.get(i);
+      if (p.life <= 0) {
+        cycles++;
+        if(cycles > 120){
+          randomColor = !randomColor;
+          background(255);
+          cycles = 0;
+          sessionCycles++;
+        }
+        particles.remove(i);
+      }
+    }
   }
-  if (console) {
-    println(timeTxt);
-    println(round(frameRate) + " fps.");
+  // add particles until the maximum
+  while (particles.size () < maxParticles) {
+    particles.add(new Particle());
+  }
+}
+
+
+void p5() {
+transition_2(bg1);
+if(p3sub > 13){
+  p3sub = 13;
+}
+  if (!bool) {
+    photo = loadImage("5_" + p3sub + ".png");
+    fg1.beginDraw();
+    fg1.clear();
+    fg1.imageMode(CENTER);
+    fg1.image(photo, wc, hc );
+    fg1.endDraw();
+    bool = true;
+  }
+}
+
+
+PGraphics transition_2(PGraphics l){
+  tempfloat1 = random(24);
+  tempfloat2 = random(24);
+  if( transition_temp_1 * 5 > h || transition_temp_1 < 0){
+    tempint = (tempint) * -1;
+  }
+  transition_temp_1 += tempint;
+  l.stroke(random(0, 33));
+  l.strokeWeight(random(24));
+  l.strokeCap(SQUARE);
+  l.fill(random(15));
+  l.beginDraw();
+  l.line( random(66) , transition_temp_1*5 + tempfloat1 , w-random(66) , transition_temp_1*5 + tempfloat2);
+  l.endDraw();
+  return l;
+}
+
+void p4() {
+transition_1(bg1);
+if(p3sub > 22){
+  p3sub = 22;
+}
+  if (!bool) {
+    photo = loadImage("4_" + p3sub + ".png");
+    fg1.beginDraw();
+    fg1.clear();
+    fg1.imageMode(CENTER);
+    fg1.image(photo, wc, hc );
+    fg1.endDraw();
+    bool = true;
+  }
+}
+
+
+int transition_temp_1 = 0;
+float tempfloat1 = 0;
+float tempfloat2 = 0;
+int tempint = 1;
+PGraphics transition_1(PGraphics l){
+  tempfloat1 = random(24);
+  tempfloat2 = random(24);
+  if( transition_temp_1 * 5 > w || transition_temp_1 < 0){
+    tempint = (tempint) * -1;
+  }
+  transition_temp_1 += tempint;
+  l.stroke(random(0, 33));
+  l.strokeWeight(random(24));
+  l.strokeCap(SQUARE);
+  l.fill(random(15));
+  l.beginDraw();
+  l.line( transition_temp_1*5 + tempfloat1 , random(66) , transition_temp_1*5 + tempfloat2 , h-random(66) );
+  l.endDraw();
+  return l;
+}
+
+
+int p3sub = 1;
+void p3() {
+p1bg(bg1);
+if(p3sub > 8){
+  p3sub = 8;
+}
+  if (!bool) {
+    photo = loadImage("3_" + p3sub + ".png");
+    fg1.beginDraw();
+    fg1.clear();
+    fg1.imageMode(CENTER);
+    fg1.image(photo, wc, hc );
+    fg1.endDraw();
+    bool = true;
+  }
+}
+
+void p2() {
+p1bg(bg1);
+  if (!bool) {
+    photo = loadImage("2.png");
+    fg1.beginDraw();
+    fg1.imageMode(CENTER);
+    fg1.image(photo, wc, hc );
+    fg1.endDraw();
+    bool = true;
   }
 }
 
@@ -79,86 +267,18 @@ void p1() {
     fg1.endDraw();
     bool = true;
   }
-  render(/* wiggle foregrand 1 , background 1: */1, 0);
 }
 
-int ms, se, mn, fps;
-String timeTxt;
-String timeStatus = "Time: OK!";
-void drawHud() {
-  ms = millis();
-  se = round(ms/1000);
-  mn = round(se/60);
-  hud.clear();
-  hud.strokeCap(SQUARE);
-  hud.beginDraw();
-  hud.strokeWeight(1);
-  hud.fill(255, 210);
-  hud.noStroke();
-  hud.rect(0, 0, 100, 39);
-  hud.strokeWeight(6);
-  hud.stroke(255, 150, 0);
-  hud.line(0, 5, (ms - (se*1000))/9.9, 5);
-  hud.stroke(255, 75, 0);
-  hud.line(0, 13, (se - (mn*60))*1.6, 13);
-  hud.stroke(180);
-  hud.line(0, 21, 100, 21);
-  hud.stroke(255, 0, 0);
-  hud.line(0, 21, (mn)*6.6, 21);
-  hud.fill(0);
-  hud.textSize(11);
-  timeTxt = mn + " : " + se + " : " + ms;
-  hud.text(timeTxt, 6, 36);
-  hud.noStroke();
-  hud.textSize(15);
-  if (mn >= 16) {
-    hud.fill(255, 0, 0);
-    hud.rect(0, 39, 100, 20);
-    hud.fill(255);
-    timeStatus = "Time Over !";
-    hud.text(timeStatus, 6, 54);
-  } else {
-    hud.fill(120, 255, 0);
-    hud.rect(0, 39, 100, 20);
-    hud.fill(0);
-    hud.text(timeStatus, 6, 54);
-  }
-  fps = round(frameRate);
-  hud.fill(66,180);
-  hud.rect(0, 59, 100, 11);
-  hud.stroke( 360-fps*4.5, fps*4.5, 0 );
-  hud.line(0, 64, fps*1.6, 64);
-  hud.fill(255, 210);
-  hud.noStroke();
-  hud.rect(0, 70, 100, 15);
-  hud.fill(255,0,0);
-  hud.textSize(11);
-  hud.text("Framerate "+fps + " fps.", 3, 81);
-  if(showGrid){
-    hud.noFill();
-    hud.stroke(255,0,0);
-    hud.strokeWeight(1);
-    hud.rect(0,0,480,320);
-    hud.text("480 x 320", 480, 320);
-    hud.rect(0,0,640,480);
-    hud.text("640 x 480", 640, 480);
-    hud.rect(0,0,800,600);
-    hud.text("800 x 600", 800, 600);
-    hud.rect(0,0,1024,768);
-    hud.text("1024 x 768", 1024, 768);
-    hud.strokeWeight(.2);
-    hud.textSize(9);
-    hud.fill(33);
-    for( int i = w; i > 0; i -= 50){
-      hud.line(i, 0 , i , h);
-      hud.text(i,i+2, h-20);
-    }
-    for( int i = h; i > 0; i -= 50){
-      hud.line(0, i , w , i);
-      hud.text(i,w-50, i);
-    }
-  }
-  hud.endDraw();
+PGraphics p1bg (PGraphics l){
+  l.stroke(random(0, 33));
+  l.strokeWeight(random(15));
+  l.strokeCap(SQUARE);
+  l.fill(random(15));
+  l.beginDraw();
+  l.line(random(width), random(height), random(width), random(height));
+  l.rect(random(width - 150), random(height - 150), random(150), random(150));
+  l.endDraw();
+  return l;
 }
 
 PGraphics khat( PGraphics l, boolean isRandomGray) {
@@ -169,27 +289,7 @@ PGraphics khat( PGraphics l, boolean isRandomGray) {
   l.strokeWeight(random(15));
   l.strokeCap(SQUARE);
   l.line(random(width), random(height), random(width), random(height));
+  l.line(random(width), random(height), random(width), random(height));
   l.endDraw();
   return l;
-}
-
-void mousePressed() {
-  println("mouse key code: " + mouseButton );
-}
-
-void keyPressed() {
-  switch(keyCode) {
-  case 32:
-    showHud = !showHud;
-    break;
-  case 67:
-    console = !console;
-    break;
-  case 71:
-    showGrid = !showGrid;
-    break;
-  default:
-    println("key code: "+keyCode);
-    break;
-  }
 }
